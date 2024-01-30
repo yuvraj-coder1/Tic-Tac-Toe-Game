@@ -79,9 +79,9 @@ fun TickTacToeGameLayout(modifier: Modifier=Modifier) {
 
         ) {
             Row {
-                TickTacToeButton()
-                TickTacToeButton()
-                TickTacToeButton()
+                TickTacToeButton(modifier = Modifier)
+                TickTacToeButton(modifier = Modifier)
+                TickTacToeButton(modifier = Modifier)
             }
             Row {
                 TickTacToeButton()
