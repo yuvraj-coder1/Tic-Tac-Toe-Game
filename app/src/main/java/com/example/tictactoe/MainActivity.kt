@@ -1,10 +1,12 @@
 package com.example.tictactoe
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,13 +39,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -95,19 +104,19 @@ fun TickTacToeGameLayout(
 
         ) {
             Row {
-                TickTacToeButton(modifier = Modifier, boxNumber = 1)
-                TickTacToeButton(modifier = Modifier, boxNumber = 2)
-                TickTacToeButton(modifier = Modifier, boxNumber = 3)
+                TickTacToeButton(modifier = Modifier, boxNumber = 1, onBoxClicked = {gameViewModel.HandleUserMove(1)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[0])
+                TickTacToeButton(modifier = Modifier, boxNumber = 2,onBoxClicked = {gameViewModel.HandleUserMove(2)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[1])
+                TickTacToeButton(modifier = Modifier, boxNumber = 3,onBoxClicked = {gameViewModel.HandleUserMove(3)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[2])
             }
             Row {
-                TickTacToeButton(modifier = Modifier, boxNumber = 4)
-                TickTacToeButton(modifier = Modifier, boxNumber = 5)
-                TickTacToeButton(modifier = Modifier, boxNumber = 6)
+                TickTacToeButton(modifier = Modifier, boxNumber = 4,onBoxClicked = {gameViewModel.HandleUserMove(4)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[3])
+                TickTacToeButton(modifier = Modifier, boxNumber = 5,onBoxClicked = {gameViewModel.HandleUserMove(5)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[4])
+                TickTacToeButton(modifier = Modifier, boxNumber = 6,onBoxClicked = {gameViewModel.HandleUserMove(6)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[5])
             }
             Row {
-                TickTacToeButton(modifier = Modifier, boxNumber = 7)
-                TickTacToeButton(modifier = Modifier, boxNumber = 8)
-                TickTacToeButton(modifier = Modifier, boxNumber = 9)
+                TickTacToeButton(modifier = Modifier, boxNumber = 7,onBoxClicked = {gameViewModel.HandleUserMove(7)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[6])
+                TickTacToeButton(modifier = Modifier, boxNumber = 8,onBoxClicked = {gameViewModel.HandleUserMove(8)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[7])
+                TickTacToeButton(modifier = Modifier, boxNumber = 9,onBoxClicked = {gameViewModel.HandleUserMove(9)},currentIconToDisplay = gameViewModel.iconToDisplayOnBoard[8])
             }
         }
     }
@@ -169,22 +178,49 @@ fun CurrentPlayerTurn(modifier: Modifier=Modifier)
     )
 }
 
-@Composable
-fun TickTacToeButton(modifier: Modifier=Modifier, boxNumber:Int) {
 
+@Composable
+fun TickTacToeButton(
+    modifier: Modifier=Modifier,
+    boxNumber:Int,
+    onBoxClicked:(Int)->Unit,
+    currentIconToDisplay:String
+) {
+    var icon: ImageVector by remember { mutableStateOf(Icons.Filled.Clear) }
+    var contentDescription:String=""
+    var iconColor: Color by remember {
+      mutableStateOf(Color.White)
+    }
+
+
+    if(currentIconToDisplay=="Cross") {
+        icon=Icons.Filled.Clear
+        contentDescription="Cross"
+        iconColor=Color.Red
+    }
+    else if(currentIconToDisplay=="Zero") {
+        icon=Icons.Rounded.Search
+        contentDescription="Zero"
+        iconColor=Color.Blue
+    }
     IconButton(modifier = modifier
         .padding(5.dp)
         .size(65.dp)
         .border(BorderStroke(2.dp, Color.Black))
-        , onClick = { /*TODO*/ }
+        , onClick = { onBoxClicked }
     )
         {
-            Icon(
-                Icons.Filled.Clear,
-                contentDescription = "Favorite",
-                tint = Color.Red,
-                modifier = Modifier.size(48.dp)
-            )
+            if(currentIconToDisplay!="empty")
+            {
+                Icon(
+
+                    imageVector =icon,
+                    contentDescription = contentDescription,
+                    tint = iconColor,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+
     }
 }
 
