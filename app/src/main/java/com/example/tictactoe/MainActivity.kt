@@ -34,6 +34,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +44,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tictactoe.ui.GameViewModel
 import com.example.tictactoe.ui.theme.TicTacToeTheme
 
 class MainActivity : ComponentActivity() {
@@ -74,7 +79,11 @@ topBar = { TickTacToeTopBar() }
 }
 
 @Composable
-fun TickTacToeGameLayout(modifier: Modifier=Modifier) {
+fun TickTacToeGameLayout(
+    modifier: Modifier=Modifier,
+    gameViewModel: GameViewModel = viewModel()
+) {
+    val gameUiState by gameViewModel.uiState.collectAsState()
     Column {
         CurrentScore()
         Spacer(modifier = modifier.size(20.dp))
@@ -86,19 +95,19 @@ fun TickTacToeGameLayout(modifier: Modifier=Modifier) {
 
         ) {
             Row {
-                TickTacToeButton(modifier = Modifier)
-                TickTacToeButton(modifier = Modifier)
-                TickTacToeButton(modifier = Modifier)
+                TickTacToeButton(modifier = Modifier, boxNumber = 1)
+                TickTacToeButton(modifier = Modifier, boxNumber = 2)
+                TickTacToeButton(modifier = Modifier, boxNumber = 3)
             }
             Row {
-                TickTacToeButton()
-                TickTacToeButton()
-                TickTacToeButton()
+                TickTacToeButton(modifier = Modifier, boxNumber = 4)
+                TickTacToeButton(modifier = Modifier, boxNumber = 5)
+                TickTacToeButton(modifier = Modifier, boxNumber = 6)
             }
             Row {
-                TickTacToeButton()
-                TickTacToeButton()
-                TickTacToeButton()
+                TickTacToeButton(modifier = Modifier, boxNumber = 7)
+                TickTacToeButton(modifier = Modifier, boxNumber = 8)
+                TickTacToeButton(modifier = Modifier, boxNumber = 9)
             }
         }
     }
@@ -161,11 +170,11 @@ fun CurrentPlayerTurn(modifier: Modifier=Modifier)
 }
 
 @Composable
-fun TickTacToeButton(modifier: Modifier=Modifier) {
+fun TickTacToeButton(modifier: Modifier=Modifier, boxNumber:Int) {
 
     IconButton(modifier = modifier
-            .padding(5.dp)
-            .size(65.dp)
+        .padding(5.dp)
+        .size(65.dp)
         .border(BorderStroke(2.dp, Color.Black))
         , onClick = { /*TODO*/ }
     )
