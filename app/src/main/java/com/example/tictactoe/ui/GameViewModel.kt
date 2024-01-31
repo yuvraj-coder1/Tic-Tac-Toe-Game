@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class GameViewModel:ViewModel() {
-    var currentplayerturn by mutableStateOf("")
-        private set
+//    var currentplayerturn by mutableStateOf("")
+//        private set
     private val _uiState=MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
@@ -31,8 +31,16 @@ class GameViewModel:ViewModel() {
         if (currentStatusOfBox == "empty") {
             // Create a new list with the updated value
             val updatedIconToDisplayOnBoard = currentUiState.iconToDisplayOnBoard.toMutableList()
-            updatedIconToDisplayOnBoard[boxNumber - 1] = "Cross"
-
+            if(currentUiState.isPlayer1Turn)
+            {
+                updatedIconToDisplayOnBoard[boxNumber - 1] = "Cross"
+                currentUiState.isPlayer1Turn=false
+            }
+            else
+            {
+                updatedIconToDisplayOnBoard[boxNumber - 1] = "Zero"
+                currentUiState.isPlayer1Turn=true
+            }
             // Assign the new list to iconToDisplayOnBoard
             currentUiState.iconToDisplayOnBoard = updatedIconToDisplayOnBoard
 
