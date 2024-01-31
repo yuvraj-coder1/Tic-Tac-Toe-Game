@@ -4,5 +4,5 @@ data class GameUiState(
    val player1Score:Int=0,
    val player2Score:Int=0,
    val isGameOver:Boolean=false,
-   val iconToDisplayOnBoard:MutableList<String> = MutableList(9) { "empty" }
+   var iconToDisplayOnBoard:MutableList<String> = MutableList(9) { "empty" }
 )

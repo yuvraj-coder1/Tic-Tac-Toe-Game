@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,7 @@ class GameViewModel:ViewModel() {
 
     @SuppressLint("SuspiciousIndentation")
     fun HandleUserMove(boxNumber:Int) {
+
         Log.d("Value Changed", "Button Clicked: Box Number = $boxNumber")
         val currentUiState = uiState.value.copy()
 
@@ -27,9 +29,12 @@ class GameViewModel:ViewModel() {
         val currentStatusOfBox: String = currentUiState.iconToDisplayOnBoard[boxNumber - 1]
         Log.d("Value Changed", "Button Clicked: Box Number = ${currentUiState.iconToDisplayOnBoard[boxNumber - 1]}")
         if (currentStatusOfBox == "empty") {
-            // Modify the copied state by updating the iconToDisplayOnBoard list
-            currentUiState.iconToDisplayOnBoard[boxNumber - 1] = "Cross"
+            // Create a new list with the updated value
+            val updatedIconToDisplayOnBoard = currentUiState.iconToDisplayOnBoard.toMutableList()
+            updatedIconToDisplayOnBoard[boxNumber - 1] = "Cross"
 
+            // Assign the new list to iconToDisplayOnBoard
+            currentUiState.iconToDisplayOnBoard = updatedIconToDisplayOnBoard
 
             // Update the _uiState with the modified GameUiState
             _uiState.value = currentUiState
