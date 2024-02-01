@@ -67,13 +67,14 @@ class GameViewModel() :ViewModel() {
                 isGameOver = true
             }
         }
+
         var checkIfAllBoxFilled:Boolean=true
         iconList.forEach(){
             if(it=="empty")
                 checkIfAllBoxFilled=false
         }
 
-        if(checkIfAllBoxFilled)
+        if(checkIfAllBoxFilled&&!isGameOver)
         {
             isGameOver=true
             isDraw=true
