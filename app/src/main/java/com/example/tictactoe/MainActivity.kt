@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,10 +95,15 @@ fun TickTacToeGameLayout(
     gameViewModel: GameViewModel = viewModel()
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
+    if(gameUiState.isGameOver)
+        Log.d("IsTheGameOver","GAME IS OVERRRRRRRRRR")
     Column {
         CurrentScore()
         Spacer(modifier = modifier.size(20.dp))
-       CurrentPlayerTurn()
+       CurrentPlayerTurn(
+           modifier=Modifier,
+           isPlayer1Turn =  gameUiState.isPlayer1Turn
+       )
         Spacer(modifier = modifier.size(20.dp))
         Column(
             modifier=Modifier.fillMaxSize(),
@@ -109,20 +115,21 @@ fun TickTacToeGameLayout(
                     modifier = Modifier,
                     boxNumber = 1,
                     onBoxClicked = { gameViewModel.HandleUserMove(1) },
-                    currentIconToDisplay = gameUiState.iconToDisplayOnBoard[0]
+                    currentIconToDisplay = gameUiState.iconToDisplayOnBoard[0],
+                    isGameOver = gameUiState.isGameOver
                 )
-                TickTacToeButton(modifier = Modifier, boxNumber = 2,onBoxClicked = {gameViewModel.HandleUserMove(2)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[1])
-                TickTacToeButton(modifier = Modifier, boxNumber = 3,onBoxClicked = {gameViewModel.HandleUserMove(3)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[2])
+                TickTacToeButton(modifier = Modifier, boxNumber = 2,onBoxClicked = {gameViewModel.HandleUserMove(2)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[1],isGameOver = gameUiState.isGameOver)
+                TickTacToeButton(modifier = Modifier, boxNumber = 3,onBoxClicked = {gameViewModel.HandleUserMove(3)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[2],isGameOver = gameUiState.isGameOver)
             }
             Row {
-                TickTacToeButton(modifier = Modifier, boxNumber = 4,onBoxClicked = {gameViewModel.HandleUserMove(4)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[3])
-                TickTacToeButton(modifier = Modifier, boxNumber = 5,onBoxClicked = {gameViewModel.HandleUserMove(5)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[4])
-                TickTacToeButton(modifier = Modifier, boxNumber = 6,onBoxClicked = {gameViewModel.HandleUserMove(6)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[5])
+                TickTacToeButton(modifier = Modifier, boxNumber = 4,onBoxClicked = {gameViewModel.HandleUserMove(4)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[3],isGameOver = gameUiState.isGameOver)
+                TickTacToeButton(modifier = Modifier, boxNumber = 5,onBoxClicked = {gameViewModel.HandleUserMove(5)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[4],isGameOver = gameUiState.isGameOver)
+                TickTacToeButton(modifier = Modifier, boxNumber = 6,onBoxClicked = {gameViewModel.HandleUserMove(6)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[5],isGameOver = gameUiState.isGameOver)
             }
             Row {
-                TickTacToeButton(modifier = Modifier, boxNumber = 7,onBoxClicked = {gameViewModel.HandleUserMove(7)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[6])
-                TickTacToeButton(modifier = Modifier, boxNumber = 8,onBoxClicked = {gameViewModel.HandleUserMove(8)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[7])
-                TickTacToeButton(modifier = Modifier, boxNumber = 9,onBoxClicked = {gameViewModel.HandleUserMove(9)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[8])
+                TickTacToeButton(modifier = Modifier, boxNumber = 7,onBoxClicked = {gameViewModel.HandleUserMove(7)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[6],isGameOver = gameUiState.isGameOver)
+                TickTacToeButton(modifier = Modifier, boxNumber = 8,onBoxClicked = {gameViewModel.HandleUserMove(8)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[7],isGameOver = gameUiState.isGameOver)
+                TickTacToeButton(modifier = Modifier, boxNumber = 9,onBoxClicked = {gameViewModel.HandleUserMove(9)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[8],isGameOver = gameUiState.isGameOver)
             }
         }
     }
@@ -174,14 +181,32 @@ fun CurrentScore(modifier: Modifier=Modifier)
 }
 
 @Composable
-fun CurrentPlayerTurn(modifier: Modifier=Modifier)
+fun CurrentPlayerTurn(
+    modifier: Modifier=Modifier,
+    isPlayer1Turn:Boolean
+)
 {
-    Text(
-        text = "Player 1 turn",
-        style = MaterialTheme.typography.headlineLarge,
-        modifier=modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
+    if(isPlayer1Turn)
+    {
+        Text(
+            text = stringResource(R.string.player_1_turn),
+            style = MaterialTheme.typography.headlineLarge,
+            modifier=modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Color.Red
+        )
+    }
+    else
+    {
+        Text(
+            text = stringResource(R.string.player_2_turn),
+            style = MaterialTheme.typography.headlineLarge,
+            modifier=modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Color.Blue
+        )
+    }
+
 }
 
 
@@ -190,13 +215,15 @@ fun TickTacToeButton(
     modifier: Modifier=Modifier,
     boxNumber:Int,
     onBoxClicked:(Int)->Unit,
-    currentIconToDisplay:String
+    currentIconToDisplay:String,
+    isGameOver:Boolean
 ) {
     IconButton(modifier = modifier
         .padding(5.dp)
         .size(65.dp)
         .border(BorderStroke(2.dp, Color.Black))
         , onClick = {
+            if(!isGameOver)
             onBoxClicked(boxNumber)
         }
     )
@@ -238,7 +265,7 @@ fun TickTacToeTopBar(modifier: Modifier = Modifier) {
 
            ) {
                Text(
-                   text = "Tic Tac Toe",
+                   text = stringResource(R.string.tic_tac_toe),
                    style = MaterialTheme.typography.displayMedium
                )
            }
