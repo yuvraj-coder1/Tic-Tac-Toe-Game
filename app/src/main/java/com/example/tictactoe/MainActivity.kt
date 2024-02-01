@@ -59,6 +59,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tictactoe.ui.GameViewModel
 import com.example.tictactoe.ui.theme.TicTacToeTheme
+import java.nio.file.WatchEvent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,12 +99,19 @@ fun TickTacToeGameLayout(
     if(gameUiState.isGameOver)
         Log.d("IsTheGameOver","GAME IS OVERRRRRRRRRR")
     Column {
-        CurrentScore()
+        CurrentScore(modifier=Modifier, player1Score = gameUiState.player1Score, player2Score = gameUiState.player2Score)
         Spacer(modifier = modifier.size(20.dp))
-       CurrentPlayerTurn(
-           modifier=Modifier,
-           isPlayer1Turn =  gameUiState.isPlayer1Turn
-       )
+        if(!gameUiState.isGameOver)
+        {
+            CurrentPlayerTurn(
+                modifier=Modifier,
+                isPlayer1Turn =  gameUiState.isPlayer1Turn
+            )
+        }
+        else
+        {
+              GameWinner(modifier= Modifier, player1Won = !gameUiState.isPlayer1Turn,isDraw = gameUiState.isDraw )
+        }
         Spacer(modifier = modifier.size(20.dp))
         Column(
             modifier=Modifier.fillMaxSize(),
@@ -136,7 +144,49 @@ fun TickTacToeGameLayout(
 }
 
 @Composable
-fun CurrentScore(modifier: Modifier=Modifier)
+fun GameWinner(modifier: Modifier,
+    player1Won:Boolean,
+               isDraw:Boolean
+) {
+    if(isDraw)
+    {
+        Text(
+            text = "DRAW!!",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier=modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Color.Gray
+        )
+    }
+   else if(player1Won)
+   {
+       Text(
+           text = "Player1 Won!!",
+           style = MaterialTheme.typography.headlineLarge,
+           modifier=modifier.fillMaxWidth(),
+           textAlign = TextAlign.Center,
+           color = Color.Red
+       )
+   }
+    else
+    {
+        Text(
+            text = "Player2 Won!!",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier=modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Color.Blue
+        )
+    }
+}
+
+
+@Composable
+fun CurrentScore(
+    modifier: Modifier=Modifier,
+    player1Score:Int,
+    player2Score:Int,
+)
 {
    Row (
        horizontalArrangement = Arrangement.SpaceBetween,
@@ -157,7 +207,7 @@ fun CurrentScore(modifier: Modifier=Modifier)
                horizontalAlignment = Alignment.CenterHorizontally
            ) {
                Text(
-                   text = "1",
+                   text = player1Score.toString(),
                    textAlign = TextAlign.Center
                )
            }
@@ -172,7 +222,7 @@ fun CurrentScore(modifier: Modifier=Modifier)
            ) {
                Text(
 
-                   text = "1",
+                   text = player2Score.toString(),
                    textAlign = TextAlign.Center
                )
            }

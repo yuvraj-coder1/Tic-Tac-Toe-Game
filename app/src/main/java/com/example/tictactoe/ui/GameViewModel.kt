@@ -48,6 +48,7 @@ class GameViewModel() :ViewModel() {
 
     fun CheckIfGameOver() {
         var isGameOver: Boolean = false
+        var isDraw:Boolean = false
         val iconList = uiState.value.iconToDisplayOnBoard.toMutableList()
         if (iconList[1] != "empty" && (iconList[0] == iconList[1]) && (iconList[1] == iconList[2])) {
             isGameOver = true
@@ -73,11 +74,17 @@ class GameViewModel() :ViewModel() {
             if(it=="empty")
                 checkIfAllBoxFilled=false
         }
+
         if(checkIfAllBoxFilled)
+        {
             isGameOver=true
+            isDraw=true
+        }
+
         _uiState.update { currentState ->
             currentState.copy(
-                isGameOver = isGameOver
+                isGameOver = isGameOver,
+                isDraw = isDraw
             )
         }
     }
