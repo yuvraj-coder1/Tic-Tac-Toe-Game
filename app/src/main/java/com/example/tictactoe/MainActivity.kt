@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -96,8 +98,6 @@ fun TickTacToeGameLayout(
     gameViewModel: GameViewModel = viewModel()
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
-    if(gameUiState.isGameOver)
-        Log.d("IsTheGameOver","GAME IS OVERRRRRRRRRR")
     Column {
         CurrentScore(modifier=Modifier, player1Score = gameUiState.player1Score, player2Score = gameUiState.player2Score)
         Spacer(modifier = modifier.size(20.dp))
@@ -114,7 +114,7 @@ fun TickTacToeGameLayout(
         }
         Spacer(modifier = modifier.size(20.dp))
         Column(
-            modifier=Modifier.fillMaxSize(),
+            modifier=Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
@@ -140,6 +140,21 @@ fun TickTacToeGameLayout(
                 TickTacToeButton(modifier = Modifier, boxNumber = 9,onBoxClicked = {gameViewModel.HandleUserMove(9)},currentIconToDisplay = gameUiState.iconToDisplayOnBoard[8],isGameOver = gameUiState.isGameOver)
             }
         }
+        Spacer(modifier = modifier.size(20.dp))
+        Column(
+            modifier=Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = { gameViewModel.NewGame() },modifier=Modifier.padding(10.dp), colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Red)) {
+                Text(stringResource(R.string.new_game))
+            }
+            Button(onClick = { gameViewModel.ResetGame() },modifier=Modifier.padding(10.dp), colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Red)) {
+                Text(stringResource(R.string.reset_game))
+            }
+        }
+
     }
 }
 
@@ -151,7 +166,7 @@ fun GameWinner(modifier: Modifier,
     if(isDraw)
     {
         Text(
-            text = "DRAW!!",
+            text = stringResource(R.string.draw),
             style = MaterialTheme.typography.headlineLarge,
             modifier=modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
@@ -161,7 +176,7 @@ fun GameWinner(modifier: Modifier,
    else if(player1Won)
    {
        Text(
-           text = "Player1 Won!!",
+           text = stringResource(R.string.player1_won),
            style = MaterialTheme.typography.headlineLarge,
            modifier=modifier.fillMaxWidth(),
            textAlign = TextAlign.Center,
@@ -171,7 +186,7 @@ fun GameWinner(modifier: Modifier,
     else
     {
         Text(
-            text = "Player2 Won!!",
+            text = stringResource(R.string.player2_won),
             style = MaterialTheme.typography.headlineLarge,
             modifier=modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,

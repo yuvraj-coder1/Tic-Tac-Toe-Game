@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class GameViewModel() :ViewModel() {
-    //    var currentplayerturn by mutableStateOf("")
-//        private set
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
@@ -85,6 +83,49 @@ class GameViewModel() :ViewModel() {
             currentState.copy(
                 isGameOver = isGameOver,
                 isDraw = isDraw
+            )
+        }
+        IncreaseScore()
+    }
+    fun IncreaseScore() {
+        if(!uiState.value.isDraw&&uiState.value.isGameOver)
+        {
+            when(uiState.value.isPlayer1Turn)
+            {
+                true->{_uiState.update { currentState ->
+                    currentState.copy(
+                        player2Score=  uiState.value.player2Score + 1
+                    )
+                }}
+                else ->{
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            player1Score=  uiState.value.player1Score + 1
+                        )
+                    }
+                }
+            }
+        }
+    }
+    fun NewGame() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isDraw = false,
+                isPlayer1Turn = true,
+                isGameOver = false,
+                iconToDisplayOnBoard = MutableList(9) { "empty" }
+            )
+        }
+    }
+    fun ResetGame() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isDraw = false,
+                isPlayer1Turn = true,
+                isGameOver = false,
+                iconToDisplayOnBoard = MutableList(9) { "empty" },
+                player2Score = 0,
+                player1Score = 0
             )
         }
     }

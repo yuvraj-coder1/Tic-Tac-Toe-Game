@@ -3,4 +3,9 @@
     <string name="player_2_turn">Player 2 turn</string>
     <string name="player_1_turn">Player 1 turn</string>
     <string name="tic_tac_toe">Tic Tac Toe</string>
+    <string name="draw">DRAW!!</string>
+    <string name="player1_won">Player1 Won!!</string>
+    <string name="player2_won">Player2 Won!!</string>
+    <string name="new_game">New Game</string>
+    <string name="reset_game">Reset Game</string>
 </resources>
