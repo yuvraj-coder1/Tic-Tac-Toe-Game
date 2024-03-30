@@ -6,5 +6,6 @@ data class GameUiState(
    val isGameOver:Boolean=false,
    val iconToDisplayOnBoard:MutableList<String> = MutableList(9) { "empty" },
    val isPlayer1Turn:Boolean = true,
-   val isDraw:Boolean = false
+   val isDraw:Boolean = false,
+   var isDarkTheme:Boolean = false
 )

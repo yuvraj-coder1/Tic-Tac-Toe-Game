@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tictactoe.ui.GameUiState
 import com.example.tictactoe.ui.GameViewModel
 import com.example.tictactoe.ui.theme.TicTacToeTheme
 import kotlin.math.min
@@ -56,13 +61,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TicTacToeTheme {
+            val gameViewModel: GameViewModel = viewModel()
+            val gameUiState by gameViewModel.uiState.collectAsState()
+            TicTacToeTheme(
+                darkTheme = gameUiState.isDarkTheme
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TickTacToeScreen()
+                    TickTacToeScreen(
+                        gameViewModel = gameViewModel,
+                        gameUiState = gameUiState
+                    )
                 }
             }
         }
@@ -71,12 +83,23 @@ class MainActivity : ComponentActivity() {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TickTacToeScreen() {
+fun TickTacToeScreen(
+    gameViewModel: GameViewModel,
+    gameUiState: GameUiState
+) {
     Scaffold(
-        topBar = { TickTacToeTopBar() }
+        topBar = {
+            TickTacToeTopBar(
+                gameUiState = gameUiState,
+                gameViewModel = gameViewModel
+            )
+        }
     ) {
         Box(modifier = Modifier.padding(top = 100.dp)) {
-            TickTacToeGameLayout()
+            TickTacToeGameLayout(
+                gameViewModel = gameViewModel,
+                gameUiState = gameUiState
+            )
         }
     }
 }
@@ -84,9 +107,9 @@ fun TickTacToeScreen() {
 @Composable
 fun TickTacToeGameLayout(
     modifier: Modifier = Modifier,
-    gameViewModel: GameViewModel = viewModel()
+    gameViewModel: GameViewModel = viewModel(),
+    gameUiState: GameUiState
 ) {
-    val gameUiState by gameViewModel.uiState.collectAsState()
     Column {
         CurrentScore(
             modifier = Modifier,
@@ -212,35 +235,36 @@ fun TickTacToeGameLayout(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameWinner(
     modifier: Modifier,
     player1Won: Boolean,
     isDraw: Boolean,
-    gameViewModel:GameViewModel
+    gameViewModel: GameViewModel
 ) {
-    @StringRes var gameResult: Int
-    if (isDraw) {
-        gameResult = R.string.draw
+    @StringRes val gameResult: Int = if (isDraw) {
+        R.string.draw
     } else if (player1Won) {
-        gameResult = R.string.player1_won
+        R.string.player1_won
     } else {
-        gameResult = R.string.player2_won
+        R.string.player2_won
     }
     val activity = (LocalContext.current as Activity)
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = { /*TODO*/ },
         title = { Text(text = stringResource(R.string.congratulations)) },
         text = { Text(text = stringResource(gameResult)) },
         dismissButton = {
-                        TextButton(onClick = {activity.finish()}) {
-                            Text(text = stringResource(R.string.exit))
-                        }
+            TextButton(onClick = { activity.finish() }) {
+                Text(text = stringResource(R.string.exit))
+            }
         },
-        confirmButton = { TextButton(onClick = { gameViewModel.NewGame() }) {
-            Text(text = stringResource(R.string.play_again))
-        } })
+        confirmButton = {
+            TextButton(onClick = { gameViewModel.NewGame() }) {
+                Text(text = stringResource(R.string.play_again))
+            }
+        })
 
 
 }
@@ -385,9 +409,13 @@ fun TickTacToeButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TickTacToeTopBar(modifier: Modifier = Modifier) {
+fun TickTacToeTopBar(
+    modifier: Modifier = Modifier,
+    gameUiState: GameUiState,
+    gameViewModel: GameViewModel
+) {
     CenterAlignedTopAppBar(
-
+        modifier = modifier,
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -395,9 +423,35 @@ fun TickTacToeTopBar(modifier: Modifier = Modifier) {
                 ) {
                 Text(
                     text = stringResource(R.string.tic_tac_toe),
-                    style = MaterialTheme.typography.displayMedium
+                    style = MaterialTheme.typography.displaySmall
                 )
+
             }
+        },
+        actions = {
+            lateinit var iconToDisplay: ImageVector
+            val iconColor: Color
+            if (gameUiState.isDarkTheme) {
+                iconToDisplay = Icons.Filled.DarkMode
+                iconColor = MaterialTheme.colorScheme.primary
+            }
+
+            else {
+                iconToDisplay = Icons.Filled.LightMode
+                iconColor = Color(0xFFFFC107)
+            }
+
+            Switch(
+                checked = gameUiState.isDarkTheme,
+                onCheckedChange = { gameViewModel.ChangeTheme() },
+                thumbContent = {
+                    Icon(
+                        imageVector = iconToDisplay,
+                        contentDescription = stringResource(R.string.dark_theme_button),
+                        tint = iconColor
+                    )
+                }
+            )
         }
     )
 }
@@ -406,6 +460,6 @@ fun TickTacToeTopBar(modifier: Modifier = Modifier) {
 @Composable
 fun TickTacToeScreenPreview() {
     TicTacToeTheme {
-        TickTacToeScreen()
+
     }
 }

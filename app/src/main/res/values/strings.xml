@@ -11,4 +11,5 @@
     <string name="exit">exit</string>
     <string name="play_again">Play again</string>
     <string name="congratulations">congratulations</string>
+    <string name="dark_theme_button">Dark theme button</string>
 </resources>

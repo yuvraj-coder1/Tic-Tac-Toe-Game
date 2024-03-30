@@ -1,14 +1,6 @@
 package com.example.tictactoe.ui
 
 import android.annotation.SuppressLint
-import android.os.Parcel
-import android.os.Parcelable
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +17,7 @@ class GameViewModel() :ViewModel() {
 
         if (currentStatusOfBox == "empty") {
             // Create a new list with the updated value
-            var updatedIsPlayer1Turn: Boolean
+            val updatedIsPlayer1Turn: Boolean
             val updatedIconToDisplayOnBoard = uiState.value.iconToDisplayOnBoard.toMutableList()
             if (_uiState.value.isPlayer1Turn) {
                 updatedIconToDisplayOnBoard[boxNumber - 1] = "Cross"
@@ -45,8 +37,8 @@ class GameViewModel() :ViewModel() {
     }
 
     fun CheckIfGameOver() {
-        var isGameOver: Boolean = false
-        var isDraw:Boolean = false
+        var isGameOver = false
+        var isDraw = false
         val iconList = uiState.value.iconToDisplayOnBoard.toMutableList()
         if (iconList[1] != "empty" && (iconList[0] == iconList[1]) && (iconList[1] == iconList[2])) {
             isGameOver = true
@@ -68,7 +60,7 @@ class GameViewModel() :ViewModel() {
             }
         }
 
-        var checkIfAllBoxFilled:Boolean=true
+        var checkIfAllBoxFilled =true
         iconList.forEach(){
             if(it=="empty")
                 checkIfAllBoxFilled=false
@@ -128,6 +120,22 @@ class GameViewModel() :ViewModel() {
                 player2Score = 0,
                 player1Score = 0
             )
+        }
+    }
+    fun ChangeTheme() {
+        if(uiState.value.isDarkTheme) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isDarkTheme = false
+                )
+            }
+        }
+        else {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isDarkTheme = true
+                )
+            }
         }
     }
 }
