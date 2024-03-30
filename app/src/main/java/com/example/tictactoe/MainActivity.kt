@@ -1,9 +1,11 @@
 package com.example.tictactoe
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -98,7 +103,8 @@ fun TickTacToeGameLayout(
             GameWinner(
                 modifier = Modifier,
                 player1Won = !gameUiState.isPlayer1Turn,
-                isDraw = gameUiState.isDraw
+                isDraw = gameUiState.isDraw,
+                gameViewModel = gameViewModel
             )
         }
         Spacer(modifier = modifier.size(20.dp))
@@ -182,15 +188,15 @@ fun TickTacToeGameLayout(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = { gameViewModel.NewGame() },
-                modifier = Modifier.padding(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.Red
-                )
-            ) {
-                Text(stringResource(R.string.new_game))
-            }
+//            Button(
+//                onClick = { gameViewModel.NewGame() },
+//                modifier = Modifier.padding(10.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    contentColor = Color.Red
+//                )
+//            ) {
+//                Text(stringResource(R.string.new_game))
+//            }
             Button(
                 onClick = { gameViewModel.ResetGame() },
                 modifier = Modifier.padding(10.dp),
@@ -206,37 +212,37 @@ fun TickTacToeGameLayout(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameWinner(
     modifier: Modifier,
     player1Won: Boolean,
-    isDraw: Boolean
+    isDraw: Boolean,
+    gameViewModel:GameViewModel
 ) {
+    @StringRes var gameResult: Int
     if (isDraw) {
-        Text(
-            text = stringResource(R.string.draw),
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = Color.Gray
-        )
+        gameResult = R.string.draw
     } else if (player1Won) {
-        Text(
-            text = stringResource(R.string.player1_won),
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = Color.Red
-        )
+        gameResult = R.string.player1_won
     } else {
-        Text(
-            text = stringResource(R.string.player2_won),
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = Color.Blue
-        )
+        gameResult = R.string.player2_won
     }
+    val activity = (LocalContext.current as Activity)
+    AlertDialog(
+        onDismissRequest = { /*TODO*/ },
+        title = { Text(text = stringResource(R.string.congratulations)) },
+        text = { Text(text = stringResource(gameResult)) },
+        dismissButton = {
+                        TextButton(onClick = {activity.finish()}) {
+                            Text(text = stringResource(R.string.exit))
+                        }
+        },
+        confirmButton = { TextButton(onClick = { gameViewModel.NewGame() }) {
+            Text(text = stringResource(R.string.play_again))
+        } })
+
+
 }
 
 
@@ -256,9 +262,9 @@ fun CurrentScore(
             modifier = Modifier
                 .size(50.dp),
 
-           colors = CardDefaults.cardColors(
-               containerColor = Color(0xFFE25A50)
-           )
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFE25A50)
+            )
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),

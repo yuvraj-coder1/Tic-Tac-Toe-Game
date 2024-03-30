@@ -8,4 +8,7 @@
     <string name="player2_won">Player2 Won!!</string>
     <string name="new_game">New Game</string>
     <string name="reset_game">Reset Game</string>
+    <string name="exit">exit</string>
+    <string name="play_again">Play again</string>
+    <string name="congratulations">congratulations</string>
 </resources>
